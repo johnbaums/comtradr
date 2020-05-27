@@ -41,10 +41,8 @@ between the indicated reporter country(s) and partner country(s). Default
 value is "TOTAL".}
 
 \item{max_rec}{Max number of records returned from each API call, as an
-integer. If max_rec is set to NULL, then value is determined by whether or
-not an API token has been registered. API cap without a token is 50000,
-cap with a valid token is 250000. Default value is NULL. For details on
-how to register a valid token, see \code{\link{ct_register_token}}.}
+integer. If max_rec is set to NULL, it is set to 100000. Default value is
+NULL.}
 
 \item{type}{Type of trade, as a character string. Must be either "goods" or
 "services". Default value is "goods".}
@@ -63,14 +61,10 @@ shipping data. Full API docs can be found here:
 \url{https://comtrade.un.org/data/doc/api/}
 }
 \details{
-Basic rate limit restrictions listed below. For details on how to
- register a valid token, see \code{\link{ct_register_token}}. For API docs
+Basic rate limit restrictions listed below. For API docs
  on rate limits, see \url{https://comtrade.un.org/data/doc/api/#Limits}
  \itemize{
- \item Without authentication token: 1 request per second, 100 requests
-   per hour (each per IP address).
- \item With valid authentication token: 1 request per second, 10,000
-   requests per hour (each per IP address or authenticated user).
+ \item 1 request per second, 100 requests per hour (each per IP address).
  }
 
  In addition to these rate limits, the API imposes some limits on

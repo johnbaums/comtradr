@@ -28,24 +28,18 @@
 #'  between the indicated reporter country(s) and partner country(s). Default
 #'  value is "TOTAL".
 #' @param max_rec Max number of records returned from each API call, as an
-#'  integer. If max_rec is set to NULL, then value is determined by whether or
-#'  not an API token has been registered. API cap without a token is 50000,
-#'  cap with a valid token is 250000. Default value is NULL. For details on
-#'  how to register a valid token, see \code{\link{ct_register_token}}.
+#'  integer. If max_rec is set to NULL, it is set to 100000. Default value is
+#'  NULL.
 #' @param type Type of trade, as a character string. Must be either "goods" or
 #'  "services". Default value is "goods".
 #' @param url Base of the Comtrade url string, as a character string. Default
 #'  value is "https://comtrade.un.org/api/get?" and should mot be changed
 #'  unless Comtrade changes their endpoint url.
 #'
-#' @details Basic rate limit restrictions listed below. For details on how to
-#'  register a valid token, see \code{\link{ct_register_token}}. For API docs
+#' @details Basic rate limit restrictions listed below. For API docs
 #'  on rate limits, see \url{https://comtrade.un.org/data/doc/api/#Limits}
 #'  \itemize{
-#'  \item Without authentication token: 1 request per second, 100 requests
-#'    per hour (each per IP address).
-#'  \item With valid authentication token: 1 request per second, 10,000
-#'    requests per hour (each per IP address or authenticated user).
+#'  \item 1 request per second, 100 requests per hour (each per IP address).
 #'  }
 #'
 #'  In addition to these rate limits, the API imposes some limits on
@@ -158,10 +152,6 @@ ct_search <- function(reporters, partners,
                  reset_time)
     stop(msg, call. = FALSE)
   }
-
-  # Fetch current value of user token, to see if an auth token has been
-  # registered.
-  token <- getOption("comtradr")$comtrade$token
 
   # Fetch the country database from ct_env.
   country_df <- get_country_db()
@@ -307,15 +297,9 @@ ct_search <- function(reporters, partners,
     commod_codes <- paste(commod_codes, collapse = "%2C")
   }
 
-  ## Get max_rec. If arg value is set to NULL, then max_rec is determined by
-  ## whether an API token has been registered. If a token has been registered,
-  ## then max_rec will be set to 250000, otherwise it will be set to 50000.
+  ## Get max_rec. If arg value is set to NULL, then max_rec is 100000.
   if (is.null(max_rec)) {
-    if (is.null(token)) {
-      max_rec <- 50000
-    } else {
-      max_rec <- 250000
-    }
+      max_rec <- 100000
   } else {
     max_rec <- as.numeric(max_rec)
   }
@@ -335,12 +319,6 @@ ct_search <- function(reporters, partners,
     "&fmt=", "json",
     "&head=", "H"
   )
-
-  ## If token within global options is not NULL, append the token str to the
-  ## end of the API url.
-  if (!is.null(token)) {
-    url <- paste0(url, "&token=", token)
-  }
 
   # Time stamp the current api query.
   assign("last_query", Sys.time(), envir = ct_env)
