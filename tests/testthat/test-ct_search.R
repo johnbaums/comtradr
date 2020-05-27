@@ -173,22 +173,6 @@ test_that("throw error with more than 20 commodity codes", {
   )
 })
 
-
-test_that("throw error when hourly query limit is at zero", {
-  # Get current rate limit values.
-  queries <- ct_get_remaining_hourly_queries()
-
-  # Assign the hourly limit value to be 0.
-  assign("queries_this_hour", 0, envir = ct_env)
-
-  expect_error(ct_search(reporters = "Canada",
-                         partners = "Germany"))
-
-  # Set the rate limit value back to what it was previously.
-  assign("queries_this_hour", queries, envir = ct_env)
-})
-
-
 test_that("throw error with invalid input to arg 'start_date' & 'end_date'", {
   expect_error(ct_search(reporters = "Canada",
                partners = "Germany",

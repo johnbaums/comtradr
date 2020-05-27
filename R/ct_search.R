@@ -137,22 +137,6 @@ ct_search <- function(reporters, partners,
                "of these may be 'all'"), call. = FALSE)
   }
 
-  # If last api query was less than 2 seconds ago, delay code by 2 seconds.
-  if (Sys.time() < get("last_query", envir = ct_env) + 2) {
-    Sys.sleep(2)
-  }
-
-  # If the hourly time limit has past, reset the hourly time limt and hourly
-  # query count.
-  reset_time <- ct_get_reset_time(set = TRUE)
-
-  # Check to make sure the hourly query limit hasn't been reached.
-  if (ct_get_remaining_hourly_queries() == 0) {
-    msg <- paste("over the hourly limit. hour resets at",
-                 reset_time)
-    stop(msg, call. = FALSE)
-  }
-
   # Fetch the country database from ct_env.
   country_df <- get_country_db()
 
@@ -321,18 +305,13 @@ ct_search <- function(reporters, partners,
   )
 
   # Time stamp the current api query.
-  assign("last_query", Sys.time(), envir = ct_env)
+  last_query <- Sys.time()
 
   # Execute API call.
   res <- execute_api_request(url)
 
-  # Edit cache variable "queries_this_hour" to be one less.
-  assign("queries_this_hour", (ct_get_remaining_hourly_queries() - 1),
-         envir = ct_env)
-
   # Assign metadata attributes to obj "res".
   attributes(res)$url <- url
-  last_query <- get("last_query", envir = ct_env)
   attributes(res)$time_stamp <- last_query
   attributes(res)$req_duration <- as.double(
     difftime(Sys.time(), last_query, units = "secs")
@@ -350,7 +329,7 @@ ct_search <- function(reporters, partners,
 #' @return data frame of API return data.
 execute_api_request <- function(url) {
   # Ping API.
-  res <- httr::GET(url, httr::user_agent(get("ua", envir = ct_env)))
+  res <- get_polite(url, httr::user_agent(get("ua", envir = ct_env)))
 
   # Check status code of res (if not 200, throw an error).
   if (httr::status_code(res) != 200) {

@@ -5,9 +5,6 @@
 ct_env <- new.env()
 
 # Variables for rate limiting.
-assign("last_query", Sys.time(), envir = ct_env)
-assign("next_hour_reset", NULL, envir = ct_env)
-assign("queries_this_hour", 100, envir = ct_env)
 assign(
   "ua",
   paste(

@@ -91,3 +91,13 @@ commodity_type_switch <- function(commodity_type) {
 
   dict[commodity_type]
 }
+
+
+#' Rate-limited version of httr::GET
+#'
+#' @importFrom ratelimitr limit_rate rate
+#' @importFrom httr GET
+#' @noRd
+get_polite <- ratelimitr::limit_rate(httr::GET,
+                                     ratelimitr::rate(n=1, period=1),
+                                     ratelimitr::rate(n=100, period=3600))
