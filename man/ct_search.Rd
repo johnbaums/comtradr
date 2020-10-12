@@ -14,7 +14,8 @@ ct_search(
   commod_codes = "TOTAL",
   max_rec = NULL,
   type = c("goods", "services"),
-  url = "https://comtrade.un.org/api/get?"
+  url = "https://comtrade.un.org/api/get?",
+  api_key
 )
 }
 \arguments{
@@ -57,6 +58,8 @@ NULL.}
 \item{url}{Base of the Comtrade url string, as a character string. Default
 value is "https://comtrade.un.org/api/get?" and should mot be changed
 unless Comtrade changes their endpoint url.}
+
+\item{api_key}{Optional Comtrade authentication token.}
 }
 \value{
 Data frame of Comtrade shipping data.

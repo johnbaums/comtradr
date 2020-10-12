@@ -35,7 +35,7 @@
 #' @param url Base of the Comtrade url string, as a character string. Default
 #'  value is "https://comtrade.un.org/api/get?" and should mot be changed
 #'  unless Comtrade changes their endpoint url.
-#'
+#' @param api_key Optional Comtrade authentication token.
 #' @details Basic rate limit restrictions listed below. For API docs
 #'  on rate limits, see \url{https://comtrade.un.org/data/doc/api/#Limits}
 #'  \itemize{
@@ -119,7 +119,7 @@ ct_search <- function(reporters, partners,
                       start_date = "all", end_date = "all",
                       commod_codes = "TOTAL", max_rec = NULL,
                       type = c("goods", "services"),
-                      url = "https://comtrade.un.org/api/get?") {
+                      url = "https://comtrade.un.org/api/get?", api_key) {
 
   ## Input validation related to API limits on parameter combinations.
 
@@ -311,7 +311,7 @@ ct_search <- function(reporters, partners,
   last_query <- Sys.time()
 
   # Execute API call.
-  res <- execute_api_request(url)
+  res <- execute_api_request(url, api_key=api_key)
 
   # Assign metadata attributes to obj "res".
   attributes(res)$url <- url
@@ -327,12 +327,18 @@ ct_search <- function(reporters, partners,
 #' Send API request to Comtrade.
 #'
 #' @param url char str, url to send to the Comtrade API.
-#'
+#' @param api_key Comtrade authentication token (optional).
 #' @noRd
 #' @return data frame of API return data.
-execute_api_request <- function(url) {
+execute_api_request <- function(url, api_key) {
   # Ping API.
-  res <- get_polite(url, httr::user_agent(get("ua", envir = ct_env)))
+  if(!missing(api_key)) {
+    res <- get_polite_authenticated(
+      sprintf('%s&token=%s', url, api_key),
+      httr::user_agent(get("ua", envir = ct_env)))
+  } else {
+    res <- get_polite_guest(url, httr::user_agent(get("ua", envir = ct_env)))
+  }
 
   # Check status code of res (if not 200, throw an error).
   if (httr::status_code(res) != 200) {

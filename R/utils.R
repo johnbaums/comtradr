@@ -98,6 +98,19 @@ commodity_type_switch <- function(commodity_type) {
 #' @importFrom ratelimitr limit_rate rate
 #' @importFrom httr GET
 #' @noRd
-get_polite <- ratelimitr::limit_rate(httr::GET,
-                                     ratelimitr::rate(n=1, period=1),
-                                     ratelimitr::rate(n=100, period=3600))
+get_polite_guest <- ratelimitr::limit_rate(
+  httr::GET,
+  ratelimitr::rate(n=1, period=1),
+  ratelimitr::rate(n=100, period=3600)
+)
+
+#' Rate-limited version of httr::GET for authenticated users
+#'
+#' @importFrom ratelimitr limit_rate rate
+#' @importFrom httr GET
+#' @noRd
+get_polite_authenticated <- ratelimitr::limit_rate(
+  httr::GET,
+  ratelimitr::rate(n=1, period=1),
+  ratelimitr::rate(n=10000, period=3600)
+)

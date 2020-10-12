@@ -1,6 +1,6 @@
 Package: comtradr
 Title: Interface with the United Nations Comtrade API
-Version: 0.2.2.09876
+Version: 0.2.2.09877
 Authors@R: c(person("Chris", "Muir", 
               email = "chrismuirRVA@gmail.com", 
               role = c("aut", "cre")), 
@@ -27,7 +27,7 @@ Imports:
         jsonlite, 
         magrittr (>= 1.5), 
         purrr
-RoxygenNote: 7.1.0
+RoxygenNote: 7.1.1
 URL: https://docs.ropensci.org/comtradr, https://github.com/ropensci/comtradr
 BugReports: https://github.com/ropensci/comtradr/issues
 NeedsCompilation: no
